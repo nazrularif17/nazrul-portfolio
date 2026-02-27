@@ -65,7 +65,7 @@ export default function Home() {
             <img
               src="/nazrul.png"
               alt="Nazrul Arif"
-              className="h-[300px] md:h-[500px] object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.7)] dark:drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+              className="h-75 md:h-125 object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.7)] dark:drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"
             />
           </div>
         </div>
