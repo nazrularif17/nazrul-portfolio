@@ -59,7 +59,7 @@ export default function Navbar() {
         style={{
           maxWidth: "72rem",
           margin: "0 auto",
-          padding: "0 clamp(1rem, 4vw, 3rem)",
+          padding: "0 clamp(1.25rem, 4vw, 3rem)",
           display: "flex",
           height: "56px",
           alignItems: "center",
@@ -70,16 +70,13 @@ export default function Navbar() {
         <a
           href="#home"
           onClick={() => setMenuOpen(false)}
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "1rem",
-            fontWeight: 800,
-            color: "var(--text)",
-            textDecoration: "none",
-            letterSpacing: "-0.02em",
-          }}
+          style={{ display: "flex", alignItems: "center", textDecoration: "none" }}
         >
-          Nazrul Arif
+          <img
+            src="/nzrl.svg"
+            alt="Nazrul Arif"
+            style={{ height: "28px", width: "auto" }}
+          />
         </a>
 
         <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
@@ -89,6 +86,7 @@ export default function Navbar() {
               <a
                 key={link.id}
                 href={`#${link.id}`}
+                onClick={() => setActive(link.id)}
                 style={{
                   fontFamily: "var(--font-display)",
                   fontSize: "0.875rem",
@@ -183,7 +181,7 @@ export default function Navbar() {
           background: "var(--bg)",
         }}
       >
-        <div style={{ padding: "8px clamp(1rem, 4vw, 3rem) 12px", display: "grid", gap: "2px" }}>
+        <div style={{ padding: "8px clamp(1.25rem, 4vw, 3rem) 12px", display: "grid", gap: "2px" }}>
           {NAV_LINKS.map((link) => (
             <a
               key={link.id}

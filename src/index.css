@@ -33,6 +33,21 @@ html {
   background-color: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, a {
+  touch-action: manipulation;
+}
+
+/* dvh fallback for hero — excludes mobile browser chrome */
+.hero-section {
+  min-height: calc(100vh - 56px);
+  min-height: calc(100dvh - 56px);
 }
 
 /* ─── Grain overlay ──────────────────────────────────────────── */

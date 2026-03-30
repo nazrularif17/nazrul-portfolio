@@ -162,7 +162,7 @@ function ProjectCard({ project: p, index: i }: { project: typeof projects[0]; in
       >
         {p.desc}
       </p>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: p.demo || p.repo ? "16px" : undefined }}>
         {p.tech.map((t) => (
           <span
             key={t}
@@ -181,6 +181,44 @@ function ProjectCard({ project: p, index: i }: { project: typeof projects[0]; in
           </span>
         ))}
       </div>
+      {(p.demo || p.repo) && (
+        <div style={{ display: "flex", gap: "10px" }}>
+          {p.demo && (
+            <a
+              href={p.demo}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "0.78rem",
+                fontWeight: 700,
+                color: "var(--accent)",
+                textDecoration: "none",
+                letterSpacing: "0.01em",
+              }}
+            >
+              Live Site ↗
+            </a>
+          )}
+          {p.repo && (
+            <a
+              href={p.repo}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "0.78rem",
+                fontWeight: 700,
+                color: "var(--text-muted)",
+                textDecoration: "none",
+                letterSpacing: "0.01em",
+              }}
+            >
+              GitHub ↗
+            </a>
+          )}
+        </div>
+      )}
     </article>
   );
 }
@@ -375,12 +413,12 @@ function ContactCard({ label, value, href, icon }: { label: string; value: strin
 
 /* ─── Divider ────────────────────────────────────────────────── */
 function Divider() {
-  return <div style={{ height: "1px", background: "var(--border)", margin: "0 clamp(1rem, 4vw, 3rem)" }} />;
+  return <div style={{ height: "1px", background: "var(--border)", margin: "0 clamp(1.25rem, 4vw, 3rem)" }} />;
 }
 
 /* ─── Section wrapper style ──────────────────────────────────── */
 const S: React.CSSProperties = {
-  padding: "clamp(3rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem)",
+  padding: "clamp(3rem, 6vw, 5rem) clamp(1.25rem, 4vw, 3rem)",
   maxWidth: "72rem",
   margin: "0 auto",
 };
@@ -418,12 +456,11 @@ export default function Home() {
       <div
         ref={heroRef}
         id="home"
-        className="scroll-mt-14"
+        className="scroll-mt-14 hero-section"
         style={{
-          minHeight: "calc(100vh - 56px)",
           display: "flex",
           alignItems: "center",
-          padding: "clamp(2rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem)",
+          padding: "clamp(2rem, 6vw, 5rem) clamp(1.25rem, 4vw, 3rem)",
         }}
       >
         <div
