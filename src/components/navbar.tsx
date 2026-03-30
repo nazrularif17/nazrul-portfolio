@@ -75,7 +75,11 @@ export default function Navbar() {
           <img
             src="/nzrl.svg"
             alt="Nazrul Arif"
-            style={{ height: "28px", width: "auto" }}
+            style={{
+              height: "28px",
+              width: "auto",
+              filter: theme === "dark" ? "brightness(0) invert(1)" : "brightness(0)",
+            }}
           />
         </a>
 
