@@ -2,6 +2,67 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ─── Design tokens ──────────────────────────────────────────── */
+:root {
+  --bg:             #f6f3ee;
+  --surface:        #ffffff;
+  --surface-subtle: #ede9e3;
+  --text:           #1c1917;
+  --text-muted:     #78716c;
+  --accent:         #b45309;
+  --accent-soft:    #d97706;
+  --border:         #e5e0d8;
+  --font-display:   'Bricolage Grotesque', sans-serif;
+  --font-body:      'DM Sans', sans-serif;
+}
+
+.dark {
+  --bg:             #0e0c0a;
+  --surface:        #161311;
+  --surface-subtle: #1d1a16;
+  --text:           #f2ede5;
+  --text-muted:     #9c9287;
+  --accent:         #d4a76a;
+  --accent-soft:    #e8c88a;
+  --border:         #2d2820;
+}
+
+/* ─── Base ───────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
 }
+
+/* ─── Grain overlay ──────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ─── Scroll reveal ──────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
+.reveal-delay-5 { transition-delay: 0.40s; }

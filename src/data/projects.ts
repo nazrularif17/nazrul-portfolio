@@ -2,6 +2,7 @@ export type Project = {
   title: string;
   desc: string;
   tech: string[];
+  award?: string;
   repo?: string;
   demo?: string;
 };
@@ -9,17 +10,18 @@ export type Project = {
 export const projects: Project[] = [
   {
     title: "EventSphere",
-    desc: "An AI-powered event organizer developed using Flutter to simplify event planning through QR-based attendance, AI-generated summaries, admin approval workflows, and a points-based reward redemption system.",
-    tech: ["Flutter", "Firebase", "Gemini AI"],
+    desc: "Cross-platform mobile app for university event management. Features AI-generated event proposals and post-event summaries via Gemini, QR-based attendance validation with check-in time control, a points & rewards redemption system, and role-based access for students, admins, and super admins.",
+    tech: ["Flutter", "Firebase", "Gemini AI", "ToyyibPay"],
   },
   {
     title: "RumahStudent",
-    desc: "A full-fledged house rental web application built with Django that allows users to browse, list, and rent properties efficiently with role-based management for landlords and tenants.",
-    tech: ["Django"],
+    desc: "Full-stack house rental management platform built with Django. Supports CRUD for listings, users, and booking records, with role-based access separating admin and tenant functionalities and a responsive front-end.",
+    tech: ["Django", "Python", "HTML/CSS", "JavaScript"],
   },
   {
     title: "Carbon Emission Tracker",
-    desc: "A Flutter-based mobile application developed during the RapidKL Data Hackathon 2023 to help users monitor their carbon footprint based on daily activities and promote environmentally conscious decisions.",
-    tech: ["Flutter"],
+    desc: "Mobile app developed for the MyRapid Hackathon 2023 that helps users track daily carbon footprint using RapidKL travel data. Competed against 20+ teams.",
+    tech: ["Flutter", "Dart"],
+    award: "Best Visualization Award · MyRapid Hackathon 2023",
   },
 ];
