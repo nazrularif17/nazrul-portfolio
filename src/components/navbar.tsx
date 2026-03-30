@@ -16,20 +16,24 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [active, setActive] = useState("home");
 
-  // Active section via IntersectionObserver
   useEffect(() => {
-    const observers: IntersectionObserver[] = [];
-    ALL_SECTIONS.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActive(id); },
-        { rootMargin: "-40% 0px -50% 0px" }
-      );
-      obs.observe(el);
-      observers.push(obs);
-    });
-    return () => observers.forEach((o) => o.disconnect());
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      let current = ALL_SECTIONS[0];
+      for (const id of ALL_SECTIONS) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        if (el.offsetTop - 120 <= scrollY) current = id;
+      }
+      setActive(current);
+    };
+
+    const raf = requestAnimationFrame(handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   // Close menu on resize to desktop
@@ -141,13 +145,10 @@ export default function Navbar() {
             onClick={() => setMenuOpen((o) => !o)}
             aria-label="Toggle menu"
             aria-expanded={menuOpen}
-            className="md:hidden"
+            className="flex md:hidden items-center justify-center"
             style={{
               width: "36px",
               height: "36px",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
               borderRadius: "10px",
               border: "1.5px solid var(--border)",
               background: "var(--surface)",

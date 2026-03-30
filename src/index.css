@@ -66,3 +66,27 @@ body::before {
 .reveal-delay-3 { transition-delay: 0.24s; }
 .reveal-delay-4 { transition-delay: 0.32s; }
 .reveal-delay-5 { transition-delay: 0.40s; }
+
+/* ─── Form inputs ────────────────────────────────────────────── */
+.portfolio-input {
+  width: 100%;
+  background: var(--surface);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.portfolio-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.portfolio-input:focus {
+  border-color: var(--accent);
+}

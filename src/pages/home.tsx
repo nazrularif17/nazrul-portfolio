@@ -185,18 +185,164 @@ function ProjectCard({ project: p, index: i }: { project: typeof projects[0]; in
   );
 }
 
+/* ─── Contact form ───────────────────────────────────────────── */
+type FormStatus = "idle" | "sending" | "success" | "error";
+
+function ContactForm() {
+  const [fields, setFields] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState<FormStatus>("idle");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFields((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fields),
+      });
+      if (!res.ok) throw new Error();
+      setStatus("success");
+      setFields({ name: "", email: "", message: "" });
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  const inputStyle: React.CSSProperties = { resize: "none" };
+
+  const cardStyle: React.CSSProperties = {
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
+    borderRadius: "20px",
+    padding: "28px",
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    gap: "18px",
+  };
+
+  if (status === "success") {
+    return (
+      <div style={{ ...cardStyle, alignItems: "center", justifyContent: "center", textAlign: "center", minHeight: "320px" }}>
+        <div style={{ fontSize: "2rem" }}>✓</div>
+        <div>
+          <p style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "1.1rem", color: "var(--text)", marginBottom: "6px" }}>
+            Message sent!
+          </p>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "0.875rem", color: "var(--text-muted)" }}>
+            Thanks for reaching out. I'll get back to you soon.
+          </p>
+        </div>
+        <button
+          onClick={() => setStatus("idle")}
+          style={{ fontFamily: "var(--font-display)", fontSize: "0.8rem", fontWeight: 600, color: "var(--accent)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+        >
+          Send another →
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div style={cardStyle}>
+      {/* Card header */}
+      <div>
+        <p style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "1.05rem", color: "var(--text)", marginBottom: "2px" }}>
+          Get in Touch
+        </p>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--text-muted)" }}>
+          I'll reply as soon as I can.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontFamily: "var(--font-display)", fontSize: "0.72rem", fontWeight: 600, color: "var(--text-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              Name
+            </label>
+            <input
+              className="portfolio-input"
+              type="text"
+              name="name"
+              placeholder="Muhammad Nazrul"
+              value={fields.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontFamily: "var(--font-display)", fontSize: "0.72rem", fontWeight: 600, color: "var(--text-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              Email
+            </label>
+            <input
+              className="portfolio-input"
+              type="email"
+              name="email"
+              placeholder="you@email.com"
+              value={fields.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <label style={{ fontFamily: "var(--font-display)", fontSize: "0.72rem", fontWeight: 600, color: "var(--text-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+            Message
+          </label>
+          <textarea
+            className="portfolio-input"
+            name="message"
+            placeholder="Hi Nazrul, I'd like to..."
+            rows={5}
+            value={fields.message}
+            onChange={handleChange}
+            required
+            style={inputStyle}
+          />
+        </div>
+
+        {status === "error" && (
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "#ef4444" }}>
+            Something went wrong. Please try again or email me directly.
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={status === "sending"}
+          style={{
+            width: "100%",
+            fontFamily: "var(--font-display)",
+            fontWeight: 700,
+            fontSize: "0.875rem",
+            letterSpacing: "0.01em",
+            background: status === "sending" ? "var(--text-muted)" : "var(--text)",
+            color: "var(--bg)",
+            border: "none",
+            borderRadius: "10px",
+            padding: "12px 24px",
+            cursor: status === "sending" ? "not-allowed" : "pointer",
+            transition: "opacity 0.2s, background 0.2s",
+          }}
+          onMouseEnter={(e) => { if (status !== "sending") e.currentTarget.style.opacity = "0.8"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+        >
+          {status === "sending" ? "Sending…" : "Send Message"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
 /* ─── Contact card ───────────────────────────────────────────── */
-function ContactCard({
-  label,
-  value,
-  href,
-  icon,
-}: {
-  label: string;
-  value: string;
-  href: string;
-  icon: React.ReactNode;
-}) {
+function ContactCard({ label, value, href, icon }: { label: string; value: string; href: string; icon: React.ReactNode }) {
   const [hovered, setHovered] = useState(false);
   return (
     <a
@@ -216,20 +362,8 @@ function ContactCard({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <span style={{ display: "block", fontSize: "1.05rem", color: "var(--accent)", marginBottom: "8px" }}>
-        {icon}
-      </span>
-      <p
-        style={{
-          fontFamily: "var(--font-display)",
-          fontSize: "0.65rem",
-          fontWeight: 600,
-          color: "var(--text-muted)",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          marginBottom: "3px",
-        }}
-      >
+      <span style={{ display: "block", fontSize: "1.05rem", color: "var(--accent)", marginBottom: "8px" }}>{icon}</span>
+      <p style={{ fontFamily: "var(--font-display)", fontSize: "0.65rem", fontWeight: 600, color: "var(--text-muted)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "3px" }}>
         {label}
       </p>
       <p style={{ fontFamily: "var(--font-body)", fontSize: "0.8rem", color: "var(--text)", fontWeight: 500, wordBreak: "break-all" }}>
@@ -745,28 +879,27 @@ export default function Home() {
       {/* ── CONTACT ──────────────────────────────────────────── */}
       <div ref={contactRef} id="contact" className="scroll-mt-14" style={S}>
         <SectionLabel number="05" title="Contact" />
-        <p
-          className="reveal reveal-delay-1"
-          style={{
-            fontFamily: "var(--font-body)",
-            fontSize: "clamp(0.95rem, 2.5vw, 1.075rem)",
-            color: "var(--text-muted)",
-            lineHeight: 1.75,
-            maxWidth: "480px",
-            marginBottom: "2rem",
-          }}
-        >
-          Want to collaborate, ask about my work, or discuss opportunities? I'd love to hear from you.
-        </p>
-        <div
-          className="reveal reveal-delay-2 grid sm:grid-cols-3 gap-3"
-          style={{ maxWidth: "580px" }}
-        >
-          <ContactCard label="Email" value="nazrularif.na@gmail.com" href="mailto:nazrularif.na@gmail.com" icon={<FaEnvelope />} />
-          <ContactCard label="GitHub" value="nazrularif17" href="https://github.com/nazrularif17" icon={<FaGithub />} />
-          <ContactCard label="LinkedIn" value="nazrul-arif" href="https://linkedin.com/in/nazrul-arif" icon={<FaLinkedin />} />
+
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+
+          {/* Left — cards + intro */}
+          <div className="reveal reveal-delay-1" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "0.925rem", color: "var(--text-muted)", lineHeight: 1.75, marginBottom: "8px" }}>
+              Want to collaborate, ask about my work, or discuss opportunities? Send me a message or reach out directly.
+            </p>
+            <ContactCard label="Email" value="nazrularif.na@gmail.com" href="mailto:nazrularif.na@gmail.com" icon={<FaEnvelope />} />
+            <ContactCard label="GitHub" value="nazrularif17" href="https://github.com/nazrularif17" icon={<FaGithub />} />
+            <ContactCard label="LinkedIn" value="nazrul-arif" href="https://linkedin.com/in/nazrul-arif" icon={<FaLinkedin />} />
+          </div>
+
+          {/* Right — form */}
+          <div className="reveal reveal-delay-2">
+            <ContactForm />
+          </div>
+
         </div>
       </div>
+
 
     </div>
   );
