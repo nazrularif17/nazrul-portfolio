@@ -12,8 +12,8 @@ export const education: Education[] = [
     institution: "Universiti Kuala Lumpur MIIT",
     short: "UniKL MIIT",
     degree: "Bachelor of Information Technology (Hons) in Software Engineering",
-    period: "Mar 2024 – Present",
-    gpa: "3.51",
+    period: "Mar 2024 – Aug 2026",
+    gpa: "3.46",
     location: "Kuala Lumpur",
   },
   {

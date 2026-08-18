@@ -2,12 +2,22 @@ import React, { useRef, useEffect, useState } from "react";
 import { projects } from "../data/projects";
 import { experience } from "../data/experience";
 import { education } from "../data/education";
+import { achievements } from "../data/achievements";
 import { FaReact, FaGithub, FaGit, FaEnvelope, FaLinkedin } from "react-icons/fa";
 import { FaFlutter } from "react-icons/fa6";
-import { SiVite, SiTailwindcss, SiFirebase, SiDjango, SiAngular, SiVuedotjs } from "react-icons/si";
+import {
+  SiVite,
+  SiTailwindcss,
+  SiFirebase,
+  SiGo,
+  SiTypescript,
+  SiPostgresql,
+  SiDocker,
+  SiRailway,
+} from "react-icons/si";
 
 /* ─── Scroll reveal hook ─────────────────────────────────────── */
-function useReveal(): React.RefObject<HTMLDivElement> {
+function useReveal(): React.RefObject<HTMLDivElement | null> {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
@@ -27,18 +37,37 @@ function useReveal(): React.RefObject<HTMLDivElement> {
   return ref;
 }
 
+/* ─── Cursor spotlight glow ──────────────────────────────────── */
+function handleSpotlight(e: React.MouseEvent<HTMLElement>) {
+  const el = e.currentTarget;
+  const rect = el.getBoundingClientRect();
+  el.style.setProperty("--spot-x", `${e.clientX - rect.left}px`);
+  el.style.setProperty("--spot-y", `${e.clientY - rect.top}px`);
+}
+
 /* ─── Tech stack (hero chips) ────────────────────────────────── */
-const TECH = [
-  { name: "Flutter",  icon: <FaFlutter />      },
-  { name: "Firebase", icon: <SiFirebase />      },
-  { name: "Django",   icon: <SiDjango />        },
-  { name: "React",    icon: <FaReact />         },
-  { name: "Angular",  icon: <SiAngular />       },
-  { name: "Vue.js",   icon: <SiVuedotjs />      },
-  { name: "Tailwind", icon: <SiTailwindcss />   },
-  { name: "Vite",     icon: <SiVite />          },
-  { name: "Git",      icon: <FaGit />           },
-  { name: "GitHub",   icon: <FaGithub />        },
+const TECH_PRIMARY = [
+  { name: "Go", icon: <SiGo /> },
+  { name: "React", icon: <FaReact /> },
+  { name: "TypeScript", icon: <SiTypescript /> },
+  { name: "PostgreSQL", icon: <SiPostgresql /> },
+  { name: "Tailwind", icon: <SiTailwindcss /> },
+  { name: "Docker", icon: <SiDocker /> },
+  { name: "Railway", icon: <SiRailway /> },
+  { name: "Git", icon: <FaGit /> },
+];
+
+const TECH_SECONDARY = [
+  { name: "Flutter", icon: <FaFlutter /> },
+  { name: "Firebase", icon: <SiFirebase /> },
+  { name: "Vite", icon: <SiVite /> },
+];
+
+/* ─── Stats strip ─────────────────────────────────────────────── */
+const STATS = [
+  { value: "5", label: "Live commercial platforms" },
+  { value: "10+", label: "Production modules shipped" },
+  { value: "6", label: "Months production experience" },
 ];
 
 /* ─── Section label ──────────────────────────────────────────── */
@@ -47,10 +76,10 @@ function SectionLabel({ number, title }: { number: string; title: string }) {
     <div className="reveal" style={{ display: "flex", alignItems: "baseline", gap: "16px", marginBottom: "2.5rem" }}>
       <span
         style={{
-          fontFamily: "var(--font-display)",
+          fontFamily: "var(--font-mono)",
           fontSize: "0.7rem",
-          fontWeight: 600,
-          color: "var(--text-muted)",
+          fontWeight: 500,
+          color: "var(--accent)",
           letterSpacing: "0.15em",
           textTransform: "uppercase",
         }}
@@ -74,70 +103,143 @@ function SectionLabel({ number, title }: { number: string; title: string }) {
   );
 }
 
-/* ─── Project card ───────────────────────────────────────────── */
-function ProjectCard({ project: p, index: i }: { project: typeof projects[0]; index: number }) {
-  const [hovered, setHovered] = useState(false);
+/* ─── Tech tag pill (mono) ───────────────────────────────────── */
+function TagMono({ children }: { children: React.ReactNode }) {
+  return <span className="tag-mono">{children}</span>;
+}
+
+/* ─── Featured project (spotlight card) ──────────────────────── */
+function FeaturedProjectCard({ project: p, index: i }: { project: typeof projects[0]; index: number }) {
   return (
     <article
-      className={`reveal reveal-delay-${Math.min(i + 1, 5)}`}
+      className={`reveal reveal-delay-${Math.min(i + 1, 5)} spotlight-card`}
+      onMouseMove={handleSpotlight}
       style={{
         background: "var(--surface)",
-        border: `1px solid ${hovered ? "var(--accent-soft)" : "var(--border)"}`,
+        border: "1px solid var(--border)",
+        borderRadius: "20px",
+        padding: "clamp(22px, 4vw, 34px)",
+        overflow: "hidden",
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "18px" }}>
+        <div>
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.65rem",
+              fontWeight: 600,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "var(--accent)",
+              marginBottom: "10px",
+            }}
+          >
+            <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--accent)" }} />
+            Featured
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--font-display)",
+              fontWeight: 800,
+              fontSize: "clamp(1.35rem, 2.5vw, 1.7rem)",
+              color: "var(--text)",
+              lineHeight: 1.15,
+              letterSpacing: "-0.02em",
+              marginBottom: "6px",
+            }}
+          >
+            {p.title}
+          </h3>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", color: "var(--accent-2)", fontWeight: 500 }}>
+            {p.subtitle}
+          </p>
+        </div>
+        {p.live && (
+          <a
+            href={p.live}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "0.8rem",
+              fontWeight: 700,
+              color: "var(--accent)",
+              textDecoration: "none",
+              flexShrink: 0,
+              border: "1.5px solid var(--border)",
+              borderRadius: "8px",
+              padding: "7px 14px",
+            }}
+          >
+            Live Site ↗
+          </a>
+        )}
+      </div>
+
+      <div style={{ display: "flex", gap: "14px", fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "18px", flexWrap: "wrap" }}>
+        <span>{p.role}</span>
+        <span style={{ opacity: 0.5 }}>·</span>
+        <span>{p.period}</span>
+      </div>
+
+      <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] gap-6 lg:gap-10">
+        <div>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", color: "var(--text-muted)", lineHeight: 1.75, marginBottom: "18px" }}>
+            {p.summary}
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+            {p.stack.map((t) => (
+              <TagMono key={t}>{t}</TagMono>
+            ))}
+          </div>
+        </div>
+
+        <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
+          {p.highlights.map((h, j) => (
+            <li
+              key={j}
+              style={{
+                display: "flex",
+                gap: "10px",
+                fontFamily: "var(--font-body)",
+                fontSize: "0.855rem",
+                color: "var(--text-muted)",
+                lineHeight: 1.65,
+              }}
+            >
+              <span style={{ color: "var(--accent-2)", flexShrink: 0, marginTop: "6px", width: "4px", height: "4px", borderRadius: "50%", background: "var(--accent-2)" }} />
+              {h}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </article>
+  );
+}
+
+/* ─── Standard project card ──────────────────────────────────── */
+function ProjectCard({ project: p, index: i }: { project: typeof projects[0]; index: number }) {
+  return (
+    <article
+      className={`reveal reveal-delay-${Math.min(i + 1, 5)} spotlight-card`}
+      onMouseMove={handleSpotlight}
+      style={{
+        background: "var(--surface)",
+        border: "1px solid var(--border)",
         borderRadius: "16px",
         padding: "22px 24px",
         display: "flex",
         flexDirection: "column",
-        transition:
-          "transform 0.28s cubic-bezier(0.16,1,0.3,1), box-shadow 0.28s cubic-bezier(0.16,1,0.3,1), border-color 0.2s",
-        transform: hovered ? "translateY(-5px)" : "translateY(0)",
-        boxShadow: hovered ? "0 16px 48px rgba(0,0,0,0.1)" : "none",
-        cursor: "default",
+        transition: "transform 0.28s var(--ease-out), border-color 0.2s",
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
     >
-      {/* Featured badge (first project only) */}
-      {i === 0 && (
-        <span
-          style={{
-            display: "inline-block",
-            fontFamily: "var(--font-display)",
-            fontSize: "0.62rem",
-            fontWeight: 700,
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            color: "var(--accent)",
-            marginBottom: "10px",
-          }}
-        >
-          ★ Featured
-        </span>
-      )}
-
-      {/* Award badge */}
-      {p.award && (
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "5px",
-            fontFamily: "var(--font-display)",
-            fontSize: "0.62rem",
-            fontWeight: 700,
-            letterSpacing: "0.06em",
-            color: "#ca8a04",
-            background: "rgba(202,138,4,0.08)",
-            border: "1px solid rgba(202,138,4,0.2)",
-            borderRadius: "6px",
-            padding: "3px 9px",
-            marginBottom: "10px",
-            width: "fit-content",
-          }}
-        >
-          🏆 {p.award}
-        </span>
-      )}
-
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--text-muted)", marginBottom: "8px", letterSpacing: "0.04em" }}>
+        {p.period}
+      </p>
       <h3
         style={{
           fontFamily: "var(--font-display)",
@@ -145,11 +247,14 @@ function ProjectCard({ project: p, index: i }: { project: typeof projects[0]; in
           fontSize: "1.025rem",
           color: "var(--text)",
           lineHeight: 1.3,
-          marginBottom: "8px",
+          marginBottom: "4px",
         }}
       >
         {p.title}
       </h3>
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--accent-2)", fontWeight: 500, marginBottom: "10px" }}>
+        {p.subtitle}
+      </p>
       <p
         style={{
           fontFamily: "var(--font-body)",
@@ -160,64 +265,35 @@ function ProjectCard({ project: p, index: i }: { project: typeof projects[0]; in
           marginBottom: "16px",
         }}
       >
-        {p.desc}
+        {p.summary}
       </p>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: p.demo || p.repo ? "16px" : undefined }}>
-        {p.tech.map((t) => (
-          <span
-            key={t}
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "0.7rem",
-              fontWeight: 600,
-              color: "var(--text-muted)",
-              background: "var(--surface-subtle)",
-              border: "1px solid var(--border)",
-              borderRadius: "6px",
-              padding: "3px 9px",
-            }}
-          >
-            {t}
-          </span>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: p.live ? "16px" : undefined }}>
+        {p.stack.map((t) => (
+          <TagMono key={t}>{t}</TagMono>
         ))}
       </div>
-      {(p.demo || p.repo) && (
-        <div style={{ display: "flex", gap: "10px" }}>
-          {p.demo && (
-            <a
-              href={p.demo}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                color: "var(--accent)",
-                textDecoration: "none",
-                letterSpacing: "0.01em",
-              }}
-            >
-              Live Site ↗
-            </a>
-          )}
-          {p.repo && (
-            <a
-              href={p.repo}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                color: "var(--text-muted)",
-                textDecoration: "none",
-                letterSpacing: "0.01em",
-              }}
-            >
-              GitHub ↗
-            </a>
-          )}
-        </div>
+      {p.live ? (
+        <a
+          href={p.live}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "0.78rem",
+            fontWeight: 700,
+            color: "var(--accent)",
+            textDecoration: "none",
+            letterSpacing: "0.01em",
+          }}
+        >
+          Live Site ↗
+        </a>
+      ) : (
+        p.role !== "Academic project" && (
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--text-muted)", opacity: 0.75 }}>
+            Private client system
+          </span>
+        )
       )}
     </article>
   );
@@ -423,6 +499,9 @@ const S: React.CSSProperties = {
   margin: "0 auto",
 };
 
+const featuredProjects = projects.filter((p) => p.featured);
+const otherProjects = projects.filter((p) => !p.featured);
+
 /* ─── Home page ──────────────────────────────────────────────── */
 export default function Home() {
   const heroRef    = useRef<HTMLDivElement>(null);
@@ -458,14 +537,16 @@ export default function Home() {
         id="home"
         className="scroll-mt-14 hero-section"
         style={{
+          position: "relative",
           display: "flex",
           alignItems: "center",
           padding: "clamp(2rem, 6vw, 5rem) clamp(1.25rem, 4vw, 3rem)",
         }}
       >
+        <div className="aurora-bg" aria-hidden="true" />
         <div
           className="w-full grid md:grid-cols-[1fr_auto] gap-10 md:gap-16 items-center"
-          style={{ maxWidth: "72rem", margin: "0 auto" }}
+          style={{ maxWidth: "72rem", margin: "0 auto", position: "relative", zIndex: 1 }}
         >
           {/* Text content */}
           <div>
@@ -483,27 +564,17 @@ export default function Home() {
                 marginBottom: "1.75rem",
               }}
             >
+              <span className="pulse-dot" />
               <span
                 style={{
-                  width: "7px",
-                  height: "7px",
-                  borderRadius: "50%",
-                  background: "#22c55e",
-                  flexShrink: 0,
-                  boxShadow: "0 0 0 2px rgba(34,197,94,0.25)",
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: "var(--font-display)",
+                  fontFamily: "var(--font-mono)",
                   fontSize: "0.7rem",
-                  fontWeight: 600,
+                  fontWeight: 500,
                   color: "var(--text-muted)",
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
                 }}
               >
-                Interning @ Nearbiz Tech
+                Software Engineer · Open to related roles
               </span>
             </div>
 
@@ -522,49 +593,28 @@ export default function Home() {
             >
               Nazrul
               <br />
-              Arif
+              <span className="grad-text">Arif</span>
             </h1>
-
-            {/* Role */}
-            <p
-              className="hero-item"
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "clamp(0.95rem, 2vw, 1.1rem)",
-                color: "var(--text-muted)",
-                marginBottom: "0.5rem",
-              }}
-            >
-              Software Engineer Intern&nbsp;&nbsp;·&nbsp;&nbsp;
-              <a
-                href="https://nearbiz.tech"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}
-              >
-                Nearbiz Tech
-              </a>
-            </p>
 
             {/* Tagline */}
             <p
               className="hero-item"
               style={{
                 fontFamily: "var(--font-body)",
-                fontSize: "clamp(0.875rem, 1.8vw, 1rem)",
+                fontSize: "clamp(0.95rem, 2vw, 1.1rem)",
                 color: "var(--text-muted)",
-                lineHeight: 1.7,
-                maxWidth: "460px",
-                marginBottom: "2.5rem",
+                lineHeight: 1.75,
+                maxWidth: "500px",
+                marginBottom: "2rem",
               }}
             >
-              Final-year SE student at UniKL MIIT, building practical software across mobile and web — Flutter, Firebase, Django, and beyond.
+              Fresh Software Engineering graduate with six months of production full-stack experience across five live commercial platforms. Builds React and TypeScript frontends on Go REST APIs and PostgreSQL, and owns the deployment pipeline end to end.
             </p>
 
             {/* CTAs */}
             <div
               className="hero-item"
-              style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "2.5rem" }}
+              style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "2.25rem" }}
             >
               <a
                 href="#projects"
@@ -607,31 +657,72 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Tech chips */}
-            <div className="hero-item" style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-              {TECH.map((t) => (
-                <div
-                  key={t.name}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "8px",
-                    padding: "5px 12px",
-                    fontFamily: "var(--font-display)",
-                    fontSize: "0.78rem",
-                    fontWeight: 600,
-                    color: "var(--text-muted)",
-                  }}
-                >
-                  <span style={{ color: "var(--accent)", display: "flex", alignItems: "center", fontSize: "13px" }}>
-                    {t.icon}
-                  </span>
-                  {t.name}
+            {/* Stats strip */}
+            <div className="hero-item" style={{ display: "flex", flexWrap: "wrap", gap: "clamp(1.5rem, 4vw, 2.5rem)", marginBottom: "2rem" }}>
+              {STATS.map((s) => (
+                <div key={s.label}>
+                  <p style={{ fontFamily: "var(--font-mono)", fontWeight: 600, fontSize: "1.5rem", color: "var(--text)", letterSpacing: "-0.02em", lineHeight: 1 }}>
+                    {s.value}
+                  </p>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "4px", maxWidth: "120px", lineHeight: 1.35 }}>
+                    {s.label}
+                  </p>
                 </div>
               ))}
+            </div>
+
+            {/* Tech chips */}
+            <div className="hero-item" style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {TECH_PRIMARY.map((t) => (
+                  <div
+                    key={t.name}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "8px",
+                      padding: "5px 12px",
+                      fontFamily: "var(--font-display)",
+                      fontSize: "0.78rem",
+                      fontWeight: 600,
+                      color: "var(--text-muted)",
+                    }}
+                  >
+                    <span style={{ color: "var(--accent)", display: "flex", alignItems: "center", fontSize: "13px" }}>
+                      {t.icon}
+                    </span>
+                    {t.name}
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", opacity: 0.65 }}>
+                {TECH_SECONDARY.map((t) => (
+                  <div
+                    key={t.name}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "8px",
+                      padding: "4px 10px",
+                      fontFamily: "var(--font-display)",
+                      fontSize: "0.72rem",
+                      fontWeight: 600,
+                      color: "var(--text-muted)",
+                    }}
+                  >
+                    <span style={{ color: "var(--accent-2)", display: "flex", alignItems: "center", fontSize: "12px" }}>
+                      {t.icon}
+                    </span>
+                    {t.name}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -665,9 +756,9 @@ export default function Home() {
             maxWidth: "660px",
           }}
         >
-          I'm a final-year Software Engineering student at{" "}
+          I'm a fresh Software Engineering graduate from{" "}
           <strong style={{ color: "var(--text)", fontWeight: 500 }}>Universiti Kuala Lumpur MIIT</strong>{" "}
-          (CGPA 3.51), currently one month into my internship as a{" "}
+          (CGPA 3.46), graduating November 2026 with all degree requirements completed. Over six months as a{" "}
           <strong style={{ color: "var(--text)", fontWeight: 500 }}>
             Software Engineer Intern at{" "}
             <a
@@ -679,7 +770,7 @@ export default function Home() {
               Nearbiz Tech
             </a>
           </strong>
-          . I have prior industry experience from an internship at Anak2U Sdn. Bhd., where I worked on Flutter mobile development. I build practical, user-focused applications — from AI-powered mobile apps to full-stack web platforms — and care about writing clean code that solves real problems.
+          , I shipped production code across five live commercial platforms — building React and TypeScript frontends on Go REST APIs and PostgreSQL, and owning deployment end to end on Railway and Cloudflare. I have prior industry experience from an internship at Anak2U Sdn. Bhd., where I worked on Flutter mobile development. I care about writing clean, tested code that solves real problems for real users.
         </p>
       </div>
 
@@ -702,12 +793,11 @@ export default function Home() {
             >
               <p
                 style={{
-                  fontFamily: "var(--font-display)",
+                  fontFamily: "var(--font-mono)",
                   fontSize: "0.7rem",
-                  fontWeight: 600,
+                  fontWeight: 500,
                   color: "var(--text-muted)",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
                   marginBottom: "6px",
                 }}
               >
@@ -736,40 +826,66 @@ export default function Home() {
               >
                 {edu.degree}
               </p>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  background: "var(--surface-subtle)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "8px",
-                  padding: "4px 12px",
-                }}
-              >
-                <span
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                <div
                   style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "0.65rem",
-                    fontWeight: 600,
-                    color: "var(--text-muted)",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    background: "var(--surface-subtle)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "4px 12px",
                   }}
                 >
-                  CGPA
-                </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "0.95rem",
-                    fontWeight: 800,
-                    color: "var(--accent)",
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  {edu.gpa}
-                </span>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "0.65rem",
+                      fontWeight: 600,
+                      color: "var(--text-muted)",
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    CGPA
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "0.95rem",
+                      fontWeight: 800,
+                      color: "var(--accent)",
+                      letterSpacing: "-0.02em",
+                    }}
+                  >
+                    {edu.gpa}
+                  </span>
+                </div>
+                {edu.short === "UniKL MIIT" && (
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      background: "var(--surface-subtle)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "8px",
+                      padding: "4px 12px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.68rem",
+                        fontWeight: 500,
+                        color: "var(--accent-2)",
+                      }}
+                    >
+                      Convocation Nov 2026
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -781,115 +897,124 @@ export default function Home() {
       {/* ── EXPERIENCE ───────────────────────────────────────── */}
       <div ref={expRef} id="experience" className="scroll-mt-14" style={S}>
         <SectionLabel number="03" title="Experience" />
-        <div style={{ display: "flex", flexDirection: "column", gap: "14px", maxWidth: "640px" }}>
+        <div className="timeline-track" style={{ display: "flex", flexDirection: "column", gap: "18px", maxWidth: "680px", marginBottom: "2.5rem" }}>
           {experience.map((exp, i) => (
-            <div
-              key={exp.company}
-              className={`reveal reveal-delay-${i + 1}`}
-              style={{
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-                borderRadius: "16px",
-                padding: "22px 26px 22px 30px",
-                position: "relative",
-              }}
-            >
-              {/* Accent bar */}
+            <div key={exp.company} className={`reveal reveal-delay-${i + 1}`} style={{ display: "flex", gap: "18px" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "6px" }}>
+                <div className={`timeline-dot ${i === 0 ? "is-accent" : ""}`} />
+              </div>
               <div
                 style={{
-                  position: "absolute",
-                  left: 0,
-                  top: "16px",
-                  bottom: "16px",
-                  width: "3px",
-                  background: exp.current ? "var(--accent)" : "var(--border)",
-                  borderRadius: "0 3px 3px 0",
-                }}
-              />
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  flexWrap: "wrap",
-                  gap: "8px",
-                  marginBottom: "12px",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "16px",
+                  padding: "22px 26px",
+                  flex: 1,
                 }}
               >
-                <div>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontWeight: 700,
-                      fontSize: "1.025rem",
-                      color: "var(--text)",
-                      marginBottom: "3px",
-                    }}
-                  >
-                    {exp.role}
-                  </p>
-                  {exp.url ? (
-                    <a
-                      href={exp.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "0.875rem", color: "var(--accent)", textDecoration: "none" }}
-                    >
-                      {exp.company}
-                    </a>
-                  ) : (
-                    <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "0.875rem", color: "var(--text-muted)" }}>
-                      {exp.company}
-                    </span>
-                  )}
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "5px" }}>
-                  {exp.current && (
-                    <span
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    flexWrap: "wrap",
+                    gap: "8px",
+                    marginBottom: "12px",
+                  }}
+                >
+                  <div>
+                    <p
                       style={{
-                        display: "inline-block",
-                        background: "rgba(34,197,94,0.1)",
-                        color: "#22c55e",
                         fontFamily: "var(--font-display)",
-                        fontSize: "0.62rem",
                         fontWeight: 700,
-                        letterSpacing: "0.12em",
-                        textTransform: "uppercase",
-                        padding: "3px 9px",
-                        borderRadius: "100px",
-                        border: "1px solid rgba(34,197,94,0.25)",
+                        fontSize: "1.025rem",
+                        color: "var(--text)",
+                        marginBottom: "3px",
                       }}
                     >
-                      Now
-                    </span>
-                  )}
-                  <span style={{ fontFamily: "var(--font-body)", fontSize: "0.8rem", color: "var(--text-muted)" }}>
+                      {exp.role}
+                    </p>
+                    {exp.url ? (
+                      <a
+                        href={exp.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "0.875rem", color: "var(--accent)", textDecoration: "none" }}
+                      >
+                        {exp.company}
+                      </a>
+                    ) : (
+                      <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "0.875rem", color: "var(--text-muted)" }}>
+                        {exp.company}
+                      </span>
+                    )}
+                  </div>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.78rem", color: "var(--text-muted)" }}>
                     {exp.period}
                   </span>
                 </div>
-              </div>
 
-              <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "6px" }}>
-                {exp.bullets.map((b, j) => (
-                  <li
-                    key={j}
-                    style={{
-                      display: "flex",
-                      gap: "10px",
-                      fontFamily: "var(--font-body)",
-                      fontSize: "0.86rem",
-                      color: "var(--text-muted)",
-                      lineHeight: 1.65,
-                    }}
-                  >
-                    <span style={{ color: "var(--accent)", flexShrink: 0, marginTop: "2px" }}>–</span>
-                    {b}
-                  </li>
-                ))}
-              </ul>
+                <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "6px" }}>
+                  {exp.bullets.map((b, j) => (
+                    <li
+                      key={j}
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                        fontFamily: "var(--font-body)",
+                        fontSize: "0.86rem",
+                        color: "var(--text-muted)",
+                        lineHeight: 1.65,
+                      }}
+                    >
+                      <span style={{ color: "var(--accent)", flexShrink: 0, marginTop: "2px" }}>–</span>
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ))}
+        </div>
+
+        {/* Achievements strip */}
+        <div className="reveal" style={{ maxWidth: "680px" }}>
+          <p
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.7rem",
+              fontWeight: 500,
+              color: "var(--text-muted)",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              marginBottom: "12px",
+            }}
+          >
+            Achievements
+          </p>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {achievements.map((a) => (
+              <div
+                key={a.title}
+                style={{
+                  background: "var(--surface-subtle)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "14px",
+                  padding: "16px 18px",
+                }}
+              >
+                <p style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.9rem", color: "var(--text)", marginBottom: "2px" }}>
+                  {a.title}
+                </p>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--accent-2)", marginBottom: "8px" }}>
+                  {a.context}
+                </p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "0.8rem", color: "var(--text-muted)", lineHeight: 1.6 }}>
+                  {a.desc}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -902,10 +1027,31 @@ export default function Home() {
           className="reveal"
           style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: "1.75rem" }}
         >
-          Selected work I've built.
+          Production work built during my internship at Nearbiz Tech, plus selected academic projects.
+        </p>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "2.5rem" }}>
+          {featuredProjects.map((p, i) => (
+            <FeaturedProjectCard key={p.title} project={p} index={i} />
+          ))}
+        </div>
+
+        <p
+          className="reveal"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.7rem",
+            fontWeight: 500,
+            color: "var(--text-muted)",
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            marginBottom: "1rem",
+          }}
+        >
+          More work
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((p, i) => (
+          {otherProjects.map((p, i) => (
             <ProjectCard key={p.title} project={p} index={i} />
           ))}
         </div>
@@ -916,6 +1062,25 @@ export default function Home() {
       {/* ── CONTACT ──────────────────────────────────────────── */}
       <div ref={contactRef} id="contact" className="scroll-mt-14" style={S}>
         <SectionLabel number="05" title="Contact" />
+
+        <div
+          className="reveal"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+            background: "var(--surface-subtle)",
+            border: "1px solid var(--border)",
+            borderRadius: "100px",
+            padding: "6px 16px",
+            marginBottom: "2rem",
+          }}
+        >
+          <span className="pulse-dot" />
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--text-muted)", letterSpacing: "0.02em" }}>
+            Available to start immediately · Graduating November 2026, all degree requirements completed August 2026
+          </span>
+        </div>
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-12">
 

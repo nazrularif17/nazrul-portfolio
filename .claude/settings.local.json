@@ -5,7 +5,22 @@
       "Bash(npm uninstall:*)",
       "Bash(npm install:*)",
       "WebFetch(domain:media.brozkey.com)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(python cli/assets/scripts/search.py \"developer portfolio software engineer confident modern dark professional\" --design-system -p \"Nazrul Portfolio\")",
+      "Bash(python cli/assets/scripts/search.py \"portfolio unique confident distinctive warm\" --domain color -n 6)",
+      "Bash(python cli/assets/scripts/search.py \"confident modern editorial distinctive\" --domain typography -n 6)",
+      "Bash(python C:/Users/nazru/.claude/plugins/cache/ui-ux-pro-max-skill/ui-ux-pro-max/2.5.0/cli/assets/scripts/search.py 'portfolio unique confident distinctive warm dark' --domain color -n 6)",
+      "Bash(python C:/Users/nazru/.claude/plugins/cache/ui-ux-pro-max-skill/ui-ux-pro-max/2.5.0/cli/assets/scripts/search.py 'confident modern editorial distinctive geometric' --domain typography -n 6)",
+      "Bash(npm run *)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5173/)",
+      "Bash(curl -s -o /dev/null -w \"media.brozkey.com -> %{http_code}\\\\n\" --max-time 8 https://media.brozkey.com/)",
+      "Bash(curl -s -o /dev/null -w \"clore.my -> %{http_code}\\\\n\" --max-time 8 https://clore.my/)",
+      "Bash(powershell -NoProfile -Command 'Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '\\\\''*vite*'\\\\'' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }')",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" --max-time 3 http://localhost:5173/)",
+      "Bash(curl -s -o /dev/null -w \"port5173: %{http_code}\\\\n\" --max-time 3 http://localhost:5173/)",
+      "Bash(git check-ignore *)",
+      "Bash(git add *)"
     ]
   }
 }
