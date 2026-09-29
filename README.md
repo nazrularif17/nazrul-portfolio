@@ -3,7 +3,7 @@
 This repository contains the source code for my personal portfolio website, built to showcase my projects, technical skills, and development experience as a Software Engineering student.
 
 🌐 **Live Website:**  
-👉 https://nazrul-portfolio-kohl.vercel.app
+👉 https://nazrul-portfolio-eight.vercel.app
 
 ---
 
